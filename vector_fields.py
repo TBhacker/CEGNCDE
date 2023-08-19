@@ -398,7 +398,7 @@ class VectorField_g_former(torch.nn.Module):
             self.mlp = Mlp(in_features=hidden_channels, hidden_features=hidden_channels, act_layer=nn.GELU, drop=0.)
 
         if self.g_type == 'former_GRU':
-            ##测试一下多头的作用 ,结果为1是更好
+       
             self.geo_num_heads = 1
             self.sem_num_heads = 1
             self.head_dim = hidden_channels // (self.geo_num_heads + self.sem_num_heads)
@@ -507,7 +507,7 @@ class VectorField_g_former(torch.nn.Module):
         - Node Adaptive Parameter Learning
         - Data Adaptive Graph Generation
         """
-        #由h生成动态矩阵，维度为64 307 307，切比雪夫K=2 
+     
         h = h[:,:,:,0]
         # 64 307 128
 
@@ -516,9 +516,9 @@ class VectorField_g_former(torch.nn.Module):
        
 
         node_num = h.shape[1]
-        #静态
+        
         supports_embedding = F.softmax(F.relu(torch.mm(self.node_embeddings, self.node_embeddings.transpose(0, 1))), dim=1)
-        #静态和动态结合
+        
         supports = self.coefficient*F.softmax(F.relu(torch.matmul(h, h.transpose(-2, -1))), dim=2) +(1-self.coefficient)*supports_embedding
         # laplacian=False
         laplacian=False
@@ -554,17 +554,17 @@ class VectorField_g_former(torch.nn.Module):
 
     def att_cheb(self, z,h):
         #z 64 170 64 B N I
-        #####动态图和静态图融合后 mask，做chebnet
+
         #ngeo_num_heads = 4
         geo_q = torch.einsum('bni,io->bno', h, self.geo_q_w) 
         geo_k = torch.einsum('bni,io->bno', h, self.geo_k_w)
         geo_v = z
         geo_attn = (geo_q @ geo_k.transpose(-2, -1)).softmax(dim=-1)
-        #加上静态
+        
         supports_embedding = F.softmax(F.relu(torch.mm(self.node_embeddings, self.node_embeddings.transpose(0, 1))), dim=1)
-        #静态和动态结合
+       
         #supports = self.coefficient*geo_attn +(1-self.coefficient)*supports_embedding
-        #将两个图按位乘
+       
         supports = torch.mul(geo_attn,supports_embedding)
         supports.masked_fill_(self.geo_mask.to(z.device), float('-inf'))
         supports = supports.softmax(dim=-1)
@@ -616,7 +616,7 @@ class VectorField_g_former(torch.nn.Module):
         return h
     def GRU(self, z, h):
         #z 64 170 64 B N I
-        #####动态图和静态图融合后 mask，做chebnet
+     
         #ngeo_num_heads = 4
         A_static = F.softmax(F.relu(torch.mm(self.node_embeddings, self.node_embeddings.transpose(0, 1))), dim=1)
         geo_q = self.geo_q_w(h)
@@ -646,7 +646,7 @@ class VectorField_g_former(torch.nn.Module):
         return z
     
     def self_att_chebnet(self, z):
-        #下动态图和静态图分别做chebnet
+        
         B, N, D = z.shape
         supports_embedding = F.softmax(F.relu(torch.mm(self.node_embeddings, self.node_embeddings.transpose(0, 1))), dim=1)
         geo_q = self.geo_q_w(z)
