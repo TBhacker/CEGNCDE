@@ -29,19 +29,10 @@ DATASET = 'PEMS08'      #PEMSD4 or PEMSD8
 MODEL = 'GCDE'
 #####
 
-# params = {
-#     "lr_init": 0.001,
-#     "embed_dim": 12,
-#     "hid_dim": 64,
-# } # 这里的参数在后面添加到模型中，以params['dropout_rate']等替换原来的参数
-# tuner_params = nni.get_next_parameter() # 获得下一组搜索空间中的参数
-# params.update(tuner_params) # 更新参数
-
-
 
 #get configuration
 #config_file = './{}_{}.conf'.format(DATASET, MODEL)
-config_file = '/home/wjj/projects/STG/model/PEMS08_GCDE.conf'
+config_file = '。/model/PEMS08_GCDE.conf'
 #print('Read configuration file: %s' % (config_file))
 config = configparser.ConfigParser()
 config.read(config_file)
@@ -180,7 +171,7 @@ else:
 
 print(model)
 if args.load_model:
-    model.load_state_dict(torch.load("/home/wjj/projects/STG/runs/PEMS08/03-31-07h:30m_former(z,h)_PEMS08_GCDE_type1_embed{10}hid{64}hidhid{64}lyrs{2}lr{0.001}wd{0.001}/best_model.pth"))
+    model.load_state_dict(torch.load("./runs/PEMS08/03-31-07h:30m_former(z,h)_PEMS08_GCDE_type1_embed{10}hid{64}hidhid{64}lyrs{2}lr{0.001}wd{0.001}/best_model.pth"))
 else:
     for p in model.parameters():
         if p.dim() > 1:
