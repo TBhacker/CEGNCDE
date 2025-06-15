@@ -1,0 +1,5 @@
+{
+    "lr_init":{"_type":"choice","_value":[0.0005, 0.001, 0.005]},
+    "hid_dim":{"_type":"choice","_value":[32, 64]},
+    "embed_dim":{"_type":"choice","_value":[8, 10, 12, 14]}
+}
